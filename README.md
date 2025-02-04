@@ -1,4 +1,7 @@
-Hands-on about the computation of non-thermal radiation and MCMC fitting with [naima](https://naima.readthedocs.io/en/latest/index.html)
+## naima_handson
+
+This repository has been prepared to give a hands-on session at the high-energy astrophysics subject of the Astrophysics, Particle Physics and Cosmology master's degree at the Universitat de Barcelona. 
+This hands-on session is about the computation of non-thermal radiation and MCMC fitting with [naima](https://naima.readthedocs.io/en/latest/index.html). 
 
 ## Install
 
@@ -23,3 +26,9 @@ conda env create -n naima python=3.11
 conda activate naima
 pip install naima
 ```
+
+## Repository structure
+
+The sctructure of the repository is divided into the "data" and "scripts" folder.
+- scrits: store Jupyter Notebook scripts to compute the non-thermal radiation and MCMC fitting.
+- data: store data files (.dat or .ecsv) that contain the spectral energy distribution data points that will be used to run the scripts in the scripts folder.
