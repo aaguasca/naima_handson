@@ -22,7 +22,7 @@ Or download it without git as follows:
 
 3. Create and activate the naima environment. Use the following:
 ```
-conda env create -n naima python=3.11
+conda env create -f environment.yml
 conda activate naima
 pip install naima
 ```
