@@ -28,23 +28,16 @@ Or download it without git as follows:
 
 4. Create and activate the naima environment. Use the following:
 ```
-<<<<<<< HEAD
 conda env create -f environment.yml
 conda activate naima
 pip install naima
 ```
 
+5. Enjoy
+Open your preferred code interface to execute the code.
+
 ## Repository structure
 
 The sctructure of the repository is divided into the "data" and "scripts" folder.
-- scrits: store Jupyter Notebook scripts to compute the non-thermal radiation and MCMC fitting.
+- scripts: store Jupyter Notebook scripts to compute the non-thermal radiation and MCMC fitting.
 - data: store data files (.dat or .ecsv) that contain the spectral energy distribution data points that will be used to run the scripts in the scripts folder.
-=======
-conda env create -n naima python=3.11
-conda activate naima_handson
-pip install naima
-```
-
-5. Enjoy
-Open your preferred code interface to execute the code.
->>>>>>> 60a90fd (code development)
