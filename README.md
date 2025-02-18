@@ -41,4 +41,4 @@ Open your preferred code interface to execute the code.
 
 The sctructure of the repository is divided into the "data" and "scripts" folder.
 - scripts: store Jupyter Notebook scripts to compute the non-thermal radiation and MCMC fitting.
-- data: store data files (.dat or .ecsv) that contain the spectral energy distribution data points that will be used to run the scripts in the scripts folder.
+- data: store data files (.ecsv) that contain the spectral energy distribution data points that will be used to run the scripts in the scripts folder.
