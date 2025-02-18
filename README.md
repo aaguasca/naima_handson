@@ -34,6 +34,7 @@ pip install naima
 ```
 
 5. Enjoy
+
 Open your preferred code interface to execute the code.
 
 ## Repository structure
