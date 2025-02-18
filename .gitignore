@@ -1,0 +1,9 @@
+FermiLAT
+HESS
+MAGIC
+homogenize_files_RSOph.ipynb
+
+.pytest_cache
+
+# Mac OSX
+.DS_Store

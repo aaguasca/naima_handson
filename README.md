@@ -7,7 +7,13 @@ This hands-on session is about the computation of non-thermal radiation and MCMC
 
 1. You will need to install [miniconda](https://docs.conda.io/en/latest/miniconda.html) (recommended) or [anaconda](https://www.anaconda.com/distribution/#download-section) first. 
 
-2. Clone the repository
+2. Preparation
+Open a terminal. Make sure you have conda activated. If not, use the following: 
+```
+conda activate
+```
+
+3. Clone the repository
 ```
 git clone https://github.com/aaguasca/naima_handson.git
 cd naima_handson
@@ -20,8 +26,9 @@ Or download it without git as follows:
 
 - Open a terminal and `cd` to the naima_handson directory. 
 
-3. Create and activate the naima environment. Use the following:
+4. Create and activate the naima environment. Use the following:
 ```
+<<<<<<< HEAD
 conda env create -f environment.yml
 conda activate naima
 pip install naima
@@ -32,3 +39,12 @@ pip install naima
 The sctructure of the repository is divided into the "data" and "scripts" folder.
 - scrits: store Jupyter Notebook scripts to compute the non-thermal radiation and MCMC fitting.
 - data: store data files (.dat or .ecsv) that contain the spectral energy distribution data points that will be used to run the scripts in the scripts folder.
+=======
+conda env create -n naima python=3.11
+conda activate naima_handson
+pip install naima
+```
+
+5. Enjoy
+Open your preferred code interface to execute the code.
+>>>>>>> 60a90fd (code development)
