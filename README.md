@@ -8,6 +8,7 @@ This hands-on session is about the computation of non-thermal radiation and MCMC
 1. You will need to install [miniconda](https://docs.conda.io/en/latest/miniconda.html) (recommended) or [anaconda](https://www.anaconda.com/distribution/#download-section) first. 
 
 2. Preparation
+
 Open a terminal. Make sure you have conda activated. If not, use the following: 
 ```
 conda activate
