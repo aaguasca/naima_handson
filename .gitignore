@@ -1,9 +1,21 @@
+#Data
 FermiLAT
 HESS
 MAGIC
 homogenize_files_RSOph.ipynb
 
+#Scripts to run fitting
+RSOph_hadronic.py
+RSOph_leptonic.py
+CrabNebula_SynIC.py
+
+#Output
+CrabNebula_results
+scripts/RSOph_results/leptonic_model/*
+scripts/RSOph_results/hadronic_model/*
+
 .pytest_cache
+__pycache__
 
 # Mac OSX
 .DS_Store
