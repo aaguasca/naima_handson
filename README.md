@@ -36,7 +36,13 @@ pip install naima
 
 5. Enjoy
 
-Open your preferred code interface to execute the code.
+The scripts in this repository have been tested using jupyter notebook. I recommend executing the scripts with it (jupyter notebook is already installed in the environment). However, you can use your preferred code interface under your responsibility.
+
+To open jupyter notebook from the terminal, use the following:
+```
+conda activate naima_handson
+jupyter notebook
+```
 
 ## Repository structure
 
