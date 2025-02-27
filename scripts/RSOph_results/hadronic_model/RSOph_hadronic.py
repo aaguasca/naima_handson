@@ -67,10 +67,10 @@ def lnprior(pars):
 
 if __name__ == '__main__':
     # Read in the SED data for each day from CSV files
-    sed_day1 = Table.read('../data/RSOph/RSOph_day1_sed.ecsv', format='ascii.ecsv')
-    sed_day2 = Table.read('../data/RSOph/RSOph_day2_sed.ecsv', format='ascii.ecsv')
-    sed_day3 = Table.read('../data/RSOph/RSOph_day3_sed.ecsv', format='ascii.ecsv')
-    sed_day4 = Table.read('../data/RSOph/RSOph_day4_sed.ecsv', format='ascii.ecsv')
+    sed_day1 = Table.read('../data/RSOph/RSOph_day1_diff_flux.ecsv', format='ascii.ecsv')
+    sed_day2 = Table.read('../data/RSOph/RSOph_day2_diff_flux.ecsv', format='ascii.ecsv')
+    sed_day3 = Table.read('../data/RSOph/RSOph_day3_diff_flux.ecsv', format='ascii.ecsv')
+    sed_day4 = Table.read('../data/RSOph/RSOph_day4_diff_flux.ecsv', format='ascii.ecsv')
 
     # Group the SED data by day
     daily_data = [sed_day1, sed_day2, sed_day3, sed_day4]
