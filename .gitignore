@@ -20,5 +20,7 @@ scripts/RSOph_results/hadronic_model/*
 .pytest_cache
 __pycache__
 
+.ipynb_checkpoints
+
 # Mac OSX
 .DS_Store
