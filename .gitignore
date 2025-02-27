@@ -1,13 +1,16 @@
 #Data
-FermiLAT
-HESS
-MAGIC
+data/RSOph/FermiLAT
+data/RSOph/HESS
+data/RSOph/MAGIC
 homogenize_files_RSOph.ipynb
+data/RXJ1713
 
 #Scripts to run fitting
 RSOph_hadronic.py
 RSOph_leptonic.py
 CrabNebula_SynIC.py
+fit_crab.ipynb
+fit_RXJ1713.ipynb
 
 #Output
 CrabNebula_results
