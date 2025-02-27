@@ -31,7 +31,7 @@ Or download it without git as follows:
 ```
 conda env create -f environment.yml
 conda activate naima_handson
-pip install naima_handson
+pip install naima
 ```
 
 5. Enjoy
