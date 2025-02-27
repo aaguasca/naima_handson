@@ -14,8 +14,8 @@ fit_RXJ1713.ipynb
 
 #Output
 CrabNebula_results
-scripts/RSOph_results/leptonic_model/*
-scripts/RSOph_results/hadronic_model/*
+scripts/RSOph_results/leptonic_model/fit*
+scripts/RSOph_results/hadronic_model/fit*
 
 __pycache__
 
