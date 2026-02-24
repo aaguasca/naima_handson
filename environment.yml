@@ -1,5 +1,15 @@
 name: naima_handson
+channels:
+  - conda-forge
+  - defaults
 dependencies:
   - python=3.11
+  - numpy
+  - astropy
+  - matplotlib
+  - pip
   - ipywidgets=8.1.5
   - jupyter
+  - pip:
+      - naima
+      - streamlit
