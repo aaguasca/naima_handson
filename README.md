@@ -14,9 +14,10 @@ The structure of the repository is divided into the "data", "notebooks" and "res
 ## Streamlit app
 
 You can execute the radiative process Jupyter notebook (notebooks/radiative_process.ipynb) as an app through Streamlit. You just need to press the button below (if the app is running):
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://naimahandson-dpjzkrkdynzmd5tid7chkb.streamlit.app/)
 
-If it does not work, you can execute it locally. First, you must follow the installation instructions below. Then, you can execute the following command:
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://naimahandson-v2a5lengbsag95enkb3t4v.streamlit.app/)
+
+If it does not work, you can execute it locally. First, you must follow the installation instructions below. Then, execute the following command:
 
 ```
 conda activate naima_handson
