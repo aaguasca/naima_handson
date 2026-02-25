@@ -677,7 +677,7 @@ if tab_selection == "Radiative Processes":
 
         with st.expander("Diagram"):
             # Ruta de la imagen
-            img_path = "scripts/images/npi_decay.png"
+            img_path = "data/images/npi_decay.png"
             # Verificamos si el archivo existe para evitar errores
             if os.path.exists(img_path):
                 st.image(
@@ -795,7 +795,7 @@ if tab_selection == "Radiative Processes":
 
         with st.expander("Diagram"):
             # Ruta de la imagen
-            img_path = "scripts/images/bremsstrahlung.png"
+            img_path = "data/images/bremsstrahlung.png"
             # Verificamos si el archivo existe para evitar errores
             if os.path.exists(img_path):
                 st.image(
@@ -905,7 +905,7 @@ if tab_selection == "Radiative Processes":
 
         with st.expander("Diagram"):
             # Ruta de la imagen
-            img_path = "scripts/images/synchrotron.png"
+            img_path = "data/images/synchrotron.png"
             # Verificamos si el archivo existe para evitar errores
             if os.path.exists(img_path):
                 st.image(
@@ -1008,7 +1008,7 @@ if tab_selection == "Radiative Processes":
 
         with st.expander("Diagram"):
             # Ruta de la imagen
-            img_path = "scripts/images/ic.png"
+            img_path = "data/images/ic.png"
             # Verificamos si el archivo existe para evitar errores
             if os.path.exists(img_path):
                 st.image(
