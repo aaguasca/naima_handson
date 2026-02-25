@@ -23,7 +23,7 @@ Note: The Jupyter Notebook `notebooks/fit_RSOph.ipynb` is not included in the St
 
 ### Online Access
 If the app is active, you can access it here:
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://naimahandson-dpjzkrkdynzmd5tid7chkb.streamlit.app/)
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://naimahandson-lrfbrj5pcxxcj3zt7ex3eu.streamlit.app/)
 
 ### Local Execution
 If the online app does not work, you can execute it locally. First, you must follow the installation instructions below. Then, execute the following command:
