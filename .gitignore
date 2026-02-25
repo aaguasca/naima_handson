@@ -10,10 +10,12 @@ CrabNebula_SynIC.py
 fit_crab.ipynb
 fit_RXJ1713.ipynb
 
+test.ipynb
+
 #Output
 CrabNebula_results
-scripts/RSOph_results/leptonic_model/fit*
-scripts/RSOph_results/hadronic_model/fit*
+results/RSOph_results/leptonic_model/fit*
+results/RSOph_results/hadronic_model/fit*
 
 __pycache__
 
