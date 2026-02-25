@@ -5,29 +5,28 @@ This hands-on session is about the computation of non-thermal radiation and MCMC
 
 ## Repository Structure
 
-- `data/`: Spectral energy distribution (SED) data files (.ecsv) and notebook images.
-- `notebooks/`: Jupyter Notebooks about radiative processes and RSOph fitting.
+- `data/`: Spectral energy distribution (SED) data files (.ecsv) and images used in Jupyter Notebooks.
+- `notebooks/`: Jupyter Notebooks about non-thermal radiative processes and RSOph fitting.
 - `results/`: Output files from fitting procedures.
-- `app_rad_processes.py`: Source code for the Streamlit application about radiative processes.
-
+- `app_rad_processes.py`: Source code for the Streamlit application about non-thermal radiative processes.
 
 ## Features
 
-- **Non-thermal Radiation Models**: Interactive interface to compute the SED of pion decay, bremsstrahlung, synchrotron, inverse Compton, and synchrotron-self Compton radiative processes.
+- **Non-thermal Radiation Models**: Interactive interface to compute the SED of pion decay, bremsstrahlung, synchrotron, inverse Compton, and synchrotron-self Compton radiative processes from a population of relativistic particles.
 - **MCMC Fitting**: Step-by-step guide for fitting a radiative model to observational gamma-ray data from the nova RS Ophiuchi.
 
 ## Streamlit App
 
-You can execute the radiative process Jupyter notebook (`notebooks/radiative_process.ipynb`) as an app through Streamlit.
+You can execute the radiative process Jupyter Notebook (`notebooks/radiative_process.ipynb`) as an app through Streamlit.
 
-Note: The notebook `notebooks/fit_RSOph.ipynb` is not included in the Streamlit app. You can find it in the notebooks folder.
+Note: The Jupyter Notebook `notebooks/fit_RSOph.ipynb` is not included in the Streamlit app. You can find it in the `notebooks` folder.
 
 ### Online Access
 If the app is active, you can access it here:
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://naimahandson-dpjzkrkdynzmd5tid7chkb.streamlit.app/)
 
 ### Local Execution
-If it does not work, you can execute it locally. First, you must follow the installation instructions below. Then, execute the following command:
+If the online app does not work, you can execute it locally. First, you must follow the installation instructions below. Then, execute the following command:
 
 ```bash
 conda activate naima_handson
@@ -67,7 +66,7 @@ Create and activate the environment using the provided configuration file:
 
 ## Usage
 
-The scripts in this repository have been tested using jupyter notebook. I recommend executing the scripts with it (jupyter notebook is already installed in the environment). However, you can use your preferred code interface under your responsibility.
+The scripts in this repository have been tested using Jupyter Notebook. I recommend executing the scripts with it (Jupyter Notebook is already installed in the environment). However, you can use your preferred code interface under your responsibility.
 
 1. **Activate Environment**:
    ```bash
@@ -79,7 +78,7 @@ The scripts in this repository have been tested using jupyter notebook. I recomm
    jupyter notebook
    ```
 
-3. **Notebooks**:
+3. **Open the Jupyter Notebooks**:
    - `notebooks/radiative_process.ipynb`: Explore non-thermal radiation models.
    - `notebooks/fit_RSOph.ipynb`: MCMC fitting application for RS Ophiuchi.
 
