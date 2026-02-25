@@ -13,12 +13,14 @@ This hands-on session is about the computation of non-thermal radiation and MCMC
 
 ## Features
 
-- **Non-thermal Radiation Models**: Computation of synchrotron, bremsstrahlung, and pion decay emission.
-- **MCMC Fitting**: Tools for fitting radiative models to observational data.
+- **Non-thermal Radiation Models**: Interactive interface to compute the SED of pion decay, bremsstrahlung, synchrotron, inverse Compton, and synchrotron-self Compton radiative processes.
+- **MCMC Fitting**: Step-by-step guide for fitting a radiative model to observational gamma-ray data from the nova RS Ophiuchi.
 
 ## Streamlit App
 
-You can execute the radiative process Jupyter notebook (notebooks/radiative_process.ipynb) as an app through Streamlit. You just need to press the button below (if the app is running):
+You can execute the radiative process Jupyter notebook (`notebooks/radiative_process.ipynb`) as an app through Streamlit.
+
+Note: The notebook `notebooks/fit_RSOph.ipynb` is not included in the Streamlit app. You can find it in the notebooks folder.
 
 ### Online Access
 If the app is active, you can access it here:
@@ -31,8 +33,6 @@ If it does not work, you can execute it locally. First, you must follow the inst
 conda activate naima_handson
 streamlit run app_rad_processes.py
 ```
-
-Note: The notebook fit_RSOph.ipynb is not included in the Streamlit app. You can find it in the notebooks folder.
 
 ## Installation
 
