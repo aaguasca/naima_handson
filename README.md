@@ -7,7 +7,7 @@ This hands-on session is about the computation of non-thermal radiation and MCMC
 
 - `data/`: Spectral energy distribution (SED) data files (.ecsv) and images used in Jupyter Notebooks.
 - `notebooks/`: Jupyter Notebooks about non-thermal radiative processes and RSOph fitting.
-- `results/`: Output files from fitting procedures.
+- `fit_results/`: Output files from fitting procedures.
 - `app_rad_processes.py`: Source code for the Streamlit application about non-thermal radiative processes.
 
 ## Features
