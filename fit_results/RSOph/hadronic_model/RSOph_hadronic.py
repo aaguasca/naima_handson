@@ -81,7 +81,7 @@ if __name__ == '__main__':
     day_array = [1, 2, 3, 4]  # Days after the nova explosion
 
     # Clean up previous results if they exist
-    os.system("rm RSOph_results/hadronic_model/fit_naima_results_all*")
+    os.system("rm ../fit_results/RSOph/hadronic_model/fit_naima_results_all*")
 
     # Loop over the data for each day
     for yy, iday in enumerate(day_array):
@@ -109,7 +109,7 @@ if __name__ == '__main__':
         )
 
         # Save the results of the fitting process
-        out_root = "RSOph_results/hadronic_model/fit_naima_results_all_day{}".format(day_array[yy])
+        out_root = "../fit_results/RSOph/hadronic_model/fit_naima_results_all_day{}".format(day_array[yy])
         naima.save_run(out_root + ".hdf5", sampler)  # Save the sampler output in HDF5 format
 
         # Save diagnostic plots and the results table

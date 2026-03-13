@@ -100,7 +100,7 @@ if __name__ == '__main__':
     daily_data = [sed_day1, sed_day2, sed_day3, sed_day4]
 
     # Remove any previous results to avoid overwriting issues
-    os.system("rm RSOph_results/leptonic_model/fit_naima_results_all*")
+    os.system("rm ../fit_results/RSOph/leptonic_model/fit_naima_results_all*")
 
     # Loop through each day of data
     for yy, iday in enumerate(day_array):
@@ -126,7 +126,7 @@ if __name__ == '__main__':
         )
         
         # Save the results of the sampling run to a file
-        out_root = "RSOph_results/leptonic_model/fit_naima_results_all_day{}".format(day_array[yy])
+        out_root = "../fit_results/RSOph/leptonic_model/fit_naima_results_all_day{}".format(day_array[yy])
         naima.save_run(out_root + ".hdf5", sampler)
 
         # Save diagnostic plots and results table
