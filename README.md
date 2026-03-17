@@ -60,8 +60,10 @@ Or download it without git as follows:
 4. **Environment Setup**:
 Create and activate the environment using the provided configuration file:
     ```bash
-    conda env create -f environment.yml.bak
-    conda activate naima_handson
+    mv environment.yml.bak environment.yml 
+    conda env create -f environment.yml 
+    mv environment.yml environment.yml.bak 
+    conda activate naima_handson 
     ```
 
 ## Usage
