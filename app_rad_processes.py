@@ -531,7 +531,7 @@ if tab_selection == "Radiative Processes":
 
     # 2. Initialize the active tab if it doesn't exist
     if "active_tab" not in st.session_state:
-        st.session_state.active_tab = "Bremsstrahlung"
+        st.session_state.active_tab = "Pion Decay"
 
 
     # --- Main area: Buttons for the radiative processes ---
