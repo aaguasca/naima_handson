@@ -8,6 +8,11 @@ import matplotlib.pyplot as plt
 import os
 from astropy.constants import c, sigma_sb, k_B, h
 
+color_particles = "gray"
+color_pion = "C0"
+color_brem = "C1"
+color_sync = "C3"
+color_ic = "C2"
 
 # --- Functions for the slider ---
 st.set_page_config(page_title="Multiwavelength Radiation Models", layout="wide")
@@ -656,11 +661,12 @@ if tab_selection == "Radiative Processes":
         st.subheader("Proton-Proton Interactions (neutral pion decay)")
         # st.write(f"Valor seleccionado: {n_target_cm3:.4f}")
 
+        bool_show_particle_dist = st.toggle("Show particle energy distribution", value=False, key=None)
 
         e_v, s_v, we = get_pion_decay_sed(distance_kpc, p_index, e_cutoff_GeV, n_target_cm3)
         
         fig1, ax1 = plt.subplots(figsize=(9, 5))
-        ax1.loglog(e_v, s_v, color='tab:blue', lw=2, 
+        ax1.loglog(e_v, s_v, color=color_pion, lw=2, 
             label=f"$d = {distance_kpc:.2f}$ kpc,\n"+\
             f"$p = {p_index:.1f}$,\n"+\
             f"$E_{{\\rm cutoff}} = {e_cutoff_GeV:.0f}$ GeV,\n"+\
@@ -669,10 +675,37 @@ if tab_selection == "Radiative Processes":
 
         ax1.set_title(f"Energy in protons ($E > 1~\\rm{{GeV}}$): {we:1.1e} erg")
         ax1.set_xlabel("Energy, $E$ (eV)")
-        ax1.set_ylabel(r"$E^2 d\phi/dE$ (erg cm$^{-2}$ s$^{-1}$)")
         ax1.grid(True, which="both", alpha=0.3)
         ax1.set_ylim(1e-13, 1e-9)
         ax1.legend(title="Pion Decay")
+
+        if bool_show_particle_dist:
+            ax1.set_ylabel("$E^2$ d$\\phi$/d$E$ (erg cm$^{-2}$ s$^{-1}$)", color=color_pion)
+            ax1.tick_params(axis='y', labelcolor=color_pion)
+            ax1_2 = ax1.twinx()
+            particle_spectrum=naima.models.ExponentialCutoffPowerLaw.eval(
+                e_v * u.eV, 
+                amplitude=1e36 / u.eV, 
+                e_0=1* u.GeV, 
+                alpha=p_index, 
+                e_cutoff=e_cutoff_GeV * u.GeV, 
+                beta=1
+            ).to("eV-1")
+            ax1_2.plot(
+                e_v, 
+                particle_spectrum,
+                color=color_particles,
+                label='Particle spectrum',
+                ls="--"
+            )
+            ax1_2.set_ylabel('d$N$/d$E$ (protons eV$^{-1}$)', color=color_particles)
+            ax1_2.tick_params(axis='y', labelcolor=color_particles)
+            ax1_2.set_yscale('log')
+            ax1_2.set_ylim([1e8,1e40])
+            ax1_2.legend(loc='lower right')
+        else:
+            ax1.set_ylabel("$E^2$ d$\\phi$/d$E$ (erg cm$^{-2}$ s$^{-1}$)")
+
         st.pyplot(fig1)
 
         with st.expander("Diagram"):
@@ -776,10 +809,13 @@ if tab_selection == "Radiative Processes":
         # st.sidebar.caption(f"E_cut: {e_cutoff_GeV:.0f} GeV | n: {n_medium_cm3:.1e}")
 
         st.subheader("Bremsstrahlung radiation")
+
+        bool_show_particle_dist = st.toggle("Show particle energy distribution", value=False, key=None)
+
         e_v2, s_v2, we = get_bremsstrahlung_sed(distance_kpc, p_index, e_cutoff_GeV, n_medium_cm3)
         
         fig2, ax2 = plt.subplots(figsize=(9, 5))
-        ax2.loglog(e_v2, s_v2, color='tab:red', lw=2, label=f"$d = {distance_kpc:.2f}$ kpc,\n"+\
+        ax2.loglog(e_v2, s_v2, color=color_brem, lw=2, label=f"$d = {distance_kpc:.2f}$ kpc,\n"+\
             f"$p = {p_index:.1f}$,\n"+\
             f"$E_{{\\rm cutoff}} = {e_cutoff_GeV:.0f}$ GeV,\n"+\
             f"$n_{{\\rm medium}} = {n_medium_cm3:.1e}$ cm$^{{-3}}$"
@@ -787,10 +823,37 @@ if tab_selection == "Radiative Processes":
 
         ax2.set_title(f"Energy in electrons ($E > 1~\\rm{{GeV}}$): {we:1.1e} erg")
         ax2.set_xlabel("Energy, $E$ (eV)")
-        ax2.set_ylabel(r"$E^2 d\phi/dE$ (erg cm$^{-2}$ s$^{-1}$)")
         ax2.grid(True, which="both", alpha=0.3)
         ax2.set_ylim(1e-13, 1e-9)
         ax2.legend(title="Bremsstrahlung")
+
+        if bool_show_particle_dist:
+            ax2.set_ylabel("$E^2$ d$\\phi$/d$E$ (erg cm$^{-2}$ s$^{-1}$)", color=color_brem)
+            ax2.tick_params(axis='y', labelcolor=color_brem)
+            ax2_2 = ax2.twinx()
+            particle_spectrum=naima.models.ExponentialCutoffPowerLaw.eval(
+                e_v2 * u.eV, 
+                amplitude=1e31 / u.eV, 
+                e_0=100* u.GeV, 
+                alpha=p_index, 
+                e_cutoff=e_cutoff_GeV * u.GeV, 
+                beta=1
+            ).to("eV-1")
+            ax2_2.plot(
+                e_v2, 
+                particle_spectrum,
+                color=color_particles,
+                label='Particle spectrum',
+                ls="--"
+            )
+            ax2_2.set_ylabel('d$N$/d$E$ (electrons eV$^{-1}$)', color=color_particles)
+            ax2_2.tick_params(axis='y', labelcolor=color_particles)
+            ax2_2.set_yscale('log')
+            ax2_2.set_ylim([1e8,1e40])
+            ax2_2.legend(loc='lower right')
+        else:
+            ax2.set_ylabel("$E^2$ d$\\phi$/d$E$ (erg cm$^{-2}$ s$^{-1}$)")
+
         st.pyplot(fig2)
 
         with st.expander("Diagram"):
@@ -879,20 +942,21 @@ if tab_selection == "Radiative Processes":
 
 
         st.subheader("Synchrotron radiation")
+
+        bool_show_particle_dist = st.toggle("Show particle energy distribution", value=False, key=None)
+
         e_v3, s_v3, we = get_synchrotron_sed(distance_kpc, p_index, e_cutoff_GeV, B_uGauss)
         
         fig3, ax3 = plt.subplots(figsize=(9, 5))
-        ax3.loglog(e_v3, s_v3, color='tab:green', lw=2, label=f"$d = {distance_kpc:.2f}$ kpc,\n"+\
+        ax3.loglog(e_v3, s_v3, color=color_sync, lw=2, label=f"$d = {distance_kpc:.2f}$ kpc,\n"+\
             f"$p = {p_index:.1f}$,\n"+\
             f"$E_{{\\rm cutoff}} = {e_cutoff_GeV:.0f}$ GeV,\n"+\
             f"$B = {B_uGauss:1.1f}$ µG"
         )
         ax3.set_title(f"Energy in electrons ($E > 1~\\rm{{GeV}}$): {we:1.1e} erg")
         ax3.set_xlabel("Energy, $E$ (eV)")
-        ax3.set_ylabel(r"$E^2 d\phi/dE$ (erg cm$^{-2}$ s$^{-1}$)")
         ax3.grid(True, which="both", alpha=0.3)
         ax3.set_ylim(1e-13, 1e-9)
-        ax3.legend(title="Synchrotron")
 
         # Create a secondary x-axis for frequency
         ax3_2 = ax3.twiny()
@@ -901,6 +965,36 @@ if tab_selection == "Radiative Processes":
         spectrum_freq_sync = (e_v3*u.eV / h).to(u.Hz)
         ax3_2.set_xlim(spectrum_freq_sync[0].value, spectrum_freq_sync[-1].value)
         ax3_2.set_xlabel("Frequency (Hz)")
+
+        if bool_show_particle_dist:
+            ax3.set_ylabel("$E^2$ d$\\phi$/d$E$ (erg cm$^{-2}$ s$^{-1}$)", color=color_sync)
+            ax3.tick_params(axis='y', labelcolor=color_sync)
+            ax3_3 = ax3.twinx()
+            particle_spectrum=naima.models.ExponentialCutoffPowerLaw.eval(
+                e_v3 * u.eV, 
+                amplitude=1e36 / u.eV, 
+                e_0=100* u.GeV, 
+                alpha=p_index, 
+                e_cutoff=e_cutoff_GeV * u.GeV, 
+                beta=1
+            ).to("eV-1")
+            ax3_3.plot(
+                e_v3, 
+                particle_spectrum,
+                color=color_particles,
+                label='Particle spectrum',
+                ls="--"
+            )
+            ax3_3.set_ylabel('d$N$/d$E$ (electrons eV$^{-1}$)', color=color_particles)
+            ax3_3.tick_params(axis='y', labelcolor=color_particles)
+            ax3_3.set_yscale('log')
+            ax3_3.set_ylim([1e18,1e50])
+            ax3_3.legend(loc='lower right')
+            ax3.legend(loc="upper left", title="Synchrotron")
+        else:
+            ax3.set_ylabel("$E^2$ d$\\phi$/d$E$ (erg cm$^{-2}$ s$^{-1}$)")
+            ax3.legend(loc="best", title="Synchrotron")
+
         st.pyplot(fig3)
 
         with st.expander("Diagram"):
@@ -989,10 +1083,13 @@ if tab_selection == "Radiative Processes":
 
 
         st.subheader("Inverse Compton scattering")
+
+        bool_show_particle_dist = st.toggle("Show particle energy distribution", value=False, key=None)
+
         e_v4, s_v4, we, additional_label = get_inverse_compton_sed(distance_kpc, p_index, e_cutoff_GeV, photon_field)
         
         fig4, ax4 = plt.subplots(figsize=(9, 5))
-        ax4.loglog(e_v4, s_v4, color='tab:orange', lw=2, 
+        ax4.loglog(e_v4, s_v4, color=color_ic, lw=2, 
             label=f"$d = {distance_kpc:.2f}$ kpc,\n"+\
             f"$E_{{\\rm cutoff}} = {e_cutoff_GeV:.0f}$ GeV,\n"+\
             f"Photon Seed = {photon_field}{additional_label}"
@@ -1000,10 +1097,37 @@ if tab_selection == "Radiative Processes":
 
         ax4.set_title(f"Energy in electrons ($E > 1~\\rm{{GeV}}$): {we:1.1e} erg")
         ax4.set_xlabel("Energy, $E$ (eV)")
-        ax4.set_ylabel(r"$E^2 d\phi/dE$ (erg cm$^{-2}$ s$^{-1}$)")
         ax4.grid(True, which="both", alpha=0.3)
         ax4.set_ylim(1e-13, 1e-9)
         ax4.legend(title="Inverse Compton")
+
+        if bool_show_particle_dist:
+            ax4.set_ylabel("$E^2$ d$\\phi$/d$E$ (erg cm$^{-2}$ s$^{-1}$)", color=color_ic)
+            ax4.tick_params(axis='y', labelcolor=color_ic)
+            ax4_2 = ax4.twinx()
+            particle_spectrum=naima.models.ExponentialCutoffPowerLaw.eval(
+                e_v4 * u.eV, 
+                amplitude=1e36 / u.eV, 
+                e_0=100* u.GeV, 
+                alpha=p_index, 
+                e_cutoff=e_cutoff_GeV * u.GeV, 
+                beta=1
+            ).to("eV-1")
+            ax4_2.plot(
+                e_v4, 
+                particle_spectrum,
+                color=color_particles,
+                label='Particle spectrum',
+                ls="--"
+            )
+            ax4_2.set_ylabel('d$N$/d$E$ (electrons eV$^{-1}$)', color=color_particles)
+            ax4_2.tick_params(axis='y', labelcolor=color_particles)
+            ax4_2.set_yscale('log')
+            ax4_2.set_ylim([1e18,1e50])
+            ax4_2.legend(loc='lower right')
+        else:
+            ax4.set_ylabel("$E^2$ d$\\phi$/d$E$ (erg cm$^{-2}$ s$^{-1}$)")
+
         st.pyplot(fig4)
 
         with st.expander("Diagram"):
@@ -1102,23 +1226,18 @@ if tab_selection == "Radiative Processes":
 
 
         st.subheader("Synchrotron-self Compton")
+
+        bool_show_particle_dist = st.toggle("Show particle energy distribution", value=False, key=None)
+
         e_v5, s_v5_sync, s_v5_ic, we_v5 = get_synchrotron_self_compton_sed(distance_kpc, p_index, e_cutoff_GeV, B_uGauss)
         
         fig5, ax5 = plt.subplots(figsize=(9, 5))
-        ax5.loglog(e_v5, s_v5_sync, color='tab:green', lw=2, label="Synchrotron")
-        ax5.loglog(e_v5, s_v5_ic, color='tab:orange', lw=2, label="Inverse Compton")
+        ax5.loglog(e_v5, s_v5_sync, color=color_sync, lw=2, label="Synchrotron")
+        ax5.loglog(e_v5, s_v5_ic, color=color_ic, lw=2, label="Inverse Compton")
         ax5.set_title(f"Energy in electrons ($E > 1~\\rm{{GeV}}$): {we_v5:1.1e} erg")
         ax5.set_xlabel("Energy, $E$ (eV)")
-        ax5.set_ylabel(r"$E^2 d\phi/dE$ (erg cm$^{-2}$ s$^{-1}$)")
         ax5.grid(True, which="both", alpha=0.3)
         ax5.set_ylim(1e-13, 1e-6)
-        ax5.legend(
-            title=f"$d = {distance_kpc:.2f}$ kpc,\n"
-            f"$p = {p_index:.1f}$,\n"
-            f"$E_{{\\rm cutoff}} = {e_cutoff_GeV:.0f}$ GeV,\n"
-            f"$B = {B_uGauss:.1f}$ µG",
-            loc="best"
-        )
 
         # Create a secondary x-axis for frequency
         ax5_2 = ax5.twiny()
@@ -1128,6 +1247,46 @@ if tab_selection == "Radiative Processes":
         ax5_2.set_xlim(spectrum_freq_SSC[0].value, spectrum_freq_SSC[-1].value)
         ax5_2.set_xlabel("Frequency (Hz)")
 
+        if bool_show_particle_dist:
+            ax5.set_ylabel("$E^2$ d$\\phi$/d$E$ (erg cm$^{-2}$ s$^{-1}$)", color=color_ic)
+            ax5.tick_params(axis='y', labelcolor=color_sync)
+            ax5_3 = ax5.twinx()
+            particle_spectrum=naima.models.ExponentialCutoffPowerLaw.eval(
+                e_v5 * u.eV, 
+                amplitude=1e36 / u.eV, 
+                e_0=100* u.GeV, 
+                alpha=p_index, 
+                e_cutoff=e_cutoff_GeV * u.GeV, 
+                beta=1
+            ).to("eV-1")
+            ax5_3.plot(
+                e_v5, 
+                particle_spectrum,
+                color=color_particles,
+                label='Particle spectrum',
+                ls="--"
+            )
+            ax5_3.set_ylabel('d$N$/d$E$ (electrons eV$^{-1}$)', color=color_particles)
+            ax5_3.tick_params(axis='y', labelcolor=color_particles)
+            ax5_3.set_yscale('log')
+            ax5_3.set_ylim([1e18,1e50])
+            ax5.legend(
+                title=f"$d = {distance_kpc:.2f}$ kpc,\n"
+                f"$p = {p_index:.1f}$,\n"
+                f"$E_{{\\rm cutoff}} = {e_cutoff_GeV:.0f}$ GeV,\n"
+                f"$B = {B_uGauss:.1f}$ µG",
+                loc="upper left"
+            )            
+            ax5_3.legend(loc='upper right')
+        else:
+            ax5.set_ylabel("$E^2$ d$\\phi$/d$E$ (erg cm$^{-2}$ s$^{-1}$)")
+            ax5.legend(
+                title=f"$d = {distance_kpc:.2f}$ kpc,\n"
+                f"$p = {p_index:.1f}$,\n"
+                f"$E_{{\\rm cutoff}} = {e_cutoff_GeV:.0f}$ GeV,\n"
+                f"$B = {B_uGauss:.1f}$ µG",
+                loc="best"
+            )
         st.pyplot(fig5)
 
     
@@ -1174,6 +1333,8 @@ else:
     st.title("Crab Nebula Multiwavelength fit")
     st.markdown("Let's try to fit by hand the Crab Nebula spectrum across the electromagnetic spectrum using a Self-Synchrotron Compton model. Can you obtain a good fit?")
 
+    bool_show_particle_dist = st.toggle("Show particle energy distribution", value=False, key=None)
+
     st.sidebar.header("Fixed parameters")
     st.sidebar.caption(
         "Energy distribution of the relativistic electrons:\n "
@@ -1201,12 +1362,11 @@ else:
         naima.plot_data(crab_data, e_unit=u.eV, figure=fig)
         
     # Graficar Modelos
-    ax1.loglog(spectrum_energy, s_syn, label="Synchrotron", color='darkorange', lw=2)
-    ax1.loglog(spectrum_energy, s_ic, label="Inverse Compton", color='royalblue', lw=2)
+    ax1.loglog(spectrum_energy, s_syn, label="Synchrotron", color=color_sync, lw=2)
+    ax1.loglog(spectrum_energy, s_ic, label="Inverse Compton", color=color_ic, lw=2)
 
     # Configuración de ejes
     ax1.set_xlabel("Energy, $E$ (eV)")
-    ax1.set_ylabel("$E^2$ d$\\phi$/d$E$ (erg cm$^{-2}$ s$^{-1}$)")
     ax1.set_ylim(1e-15, 1e-7)
     ax1.legend(
         title=f"Distance = {distance_kpc:.2f} kpc,\n"
@@ -1229,8 +1389,35 @@ else:
     ax3.spines['top'].set_position(('outward', 40))
     ax3.set_xlabel("Wavelength (m)")
 
+    if bool_show_particle_dist:
+        ax1.set_ylabel("$E^2$ d$\\phi$/d$E$ (erg cm$^{-2}$ s$^{-1}$)", color=color_ic)
+        ax1.tick_params(axis='y', labelcolor=color_sync)
+        ax1_4 = ax1.twinx()
+        particle_spectrum=naima.models.ExponentialCutoffBrokenPowerLaw.eval(
+            spectrum_energy * u.eV, 
+            amplitude=3.699e36 / u.eV, 
+            e_0=1 * u.TeV, 
+            e_break=0.265 * u.TeV, 
+            alpha_1=1.5,
+            alpha_2=3.233,
+            e_cutoff=e_cutoff_TeV * u.TeV, 
+            beta=2.0
+        ).to("eV-1")
+        ax1_4.plot(
+            spectrum_energy, 
+            particle_spectrum,
+            color=color_particles,
+            label='Particle spectrum',
+            ls="--"
+        )
+        ax1_4.set_ylabel('d$N$/d$E$ (electrons eV$^{-1}$)', color=color_particles)
+        ax1_4.tick_params(axis='y', labelcolor=color_particles)
+        ax1_4.set_yscale('log')
+        ax1_4.set_ylim([1e18,1e50])
+        ax1_4.legend(loc='lower right')
+    else:
+        ax1.set_ylabel("$E^2$ d$\\phi$/d$E$ (erg cm$^{-2}$ s$^{-1}$)")
+
     st.pyplot(fig)
 
     st.info("The Inverse Compton model includes CMB, FIR, NIR, and Self-Synchrotron Compton (SSC) seed fields.")
-
-
