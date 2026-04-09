@@ -165,9 +165,11 @@ def get_pion_decay_sed(distance_kpc, p, e_cutoff_GeV, n_target_cm3):
     distance = distance_kpc * u.kpc  # Assign kpc unit to the distance_kpc variable, hereafter distance
     e_cutoff = e_cutoff_GeV * u.GeV  # Assign GeV unit to the e_cutoff_GeV variable, hereafter e_cutoff
     n_target = n_target_cm3 * u.cm ** -3  # Convert target density to proper unit
+    amplitude = 1e36 / u.eV  # Set a normalization value for the spectrum
+    e_0 = 1 * u.GeV  # Reference energy of 1 GeV
     part_dist = naima.models.ExponentialCutoffPowerLaw(
-        amplitude=1e36 / u.eV,  # Set a normalization value for the spectrum
-        e_0=1 * u.GeV,  # Reference energy of 1 GeV
+        amplitude=amplitude,  # Set the normalization
+        e_0=e_0,  # Set the reference energy
         alpha=p,  # Spectral index of particles (determines shape of the power-law model)
         e_cutoff=e_cutoff  # Apply the user-defined cutoff energy
     )
@@ -180,7 +182,7 @@ def get_pion_decay_sed(distance_kpc, p, e_cutoff_GeV, n_target_cm3):
     # Compute the total energy in protons above 1 GeV
     wp = rad_models.compute_Wp(1*u.GeV).to(u.erg).value
     
-    return energy_range.value, sed.to(u.Unit("erg cm-2 s-1")).value, wp
+    return energy_range.value, sed.to(u.Unit("erg cm-2 s-1")).value, wp, amplitude, e_0
 
 @st.cache_data
 def get_bremsstrahlung_sed(distance_kpc, p, e_cutoff_GeV, n_medium_cm3):
@@ -214,17 +216,19 @@ def get_bremsstrahlung_sed(distance_kpc, p, e_cutoff_GeV, n_medium_cm3):
     distance = distance_kpc * u.kpc
     e_cutoff = e_cutoff_GeV * u.GeV
     n_medium = n_medium_cm3 * u.cm ** -3
+    amplitude = 1e31 / u.eV
+    e_0 = 100 * u.GeV
     # Define particle distribution with the given cutoff energy
     part_dist = naima.models.ExponentialCutoffPowerLaw(
-        amplitude=1e31 / u.eV,
-        e_0=100 * u.GeV,
+        amplitude=amplitude,
+        e_0=e_0,
         alpha=p,
         e_cutoff=e_cutoff
     )
     rad_models = naima.models.Bremsstrahlung(part_dist, n0=n_medium)
     sed = rad_models.sed(energy_range, distance=distance)
     we = rad_models.compute_We(1*u.GeV).to(u.erg).value
-    return energy_range.value, sed.to(u.Unit("erg cm-2 s-1")).value, we
+    return energy_range.value, sed.to(u.Unit("erg cm-2 s-1")).value, we, amplitude, e_0
 
 @st.cache_data
 def get_synchrotron_sed(distance_kpc, p, e_cutoff_GeV, B_uGauss):
@@ -252,20 +256,22 @@ def get_synchrotron_sed(distance_kpc, p, e_cutoff_GeV, B_uGauss):
     we : float
         Total energy in electrons above 1 GeV in erg.
     """
+    energy_range = np.logspace(-9, 13, 100) * u.eV
     distance = distance_kpc * u.kpc
     e_cutoff = e_cutoff_GeV * u.GeV
     magnetic_field = B_uGauss * u.uG
-    energy_range = np.logspace(-9, 13, 100) * u.eV
+    amplitude = 1e36 / u.eV
+    e_0 = 100 * u.GeV
     part_dist = naima.models.ExponentialCutoffPowerLaw(
-        amplitude=1e36 / u.eV,
-        e_0=100 * u.GeV,
+        amplitude=amplitude,
+        e_0=e_0,
         alpha=p,
         e_cutoff=e_cutoff
     )
     rad_models = naima.models.Synchrotron(part_dist, B=magnetic_field)
     sed = rad_models.sed(energy_range, distance=distance)
     we = rad_models.compute_We(1*u.GeV).to(u.erg).value
-    return energy_range.value, sed.to(u.Unit("erg cm-2 s-1")).value, we
+    return energy_range.value, sed.to(u.Unit("erg cm-2 s-1")).value, we, amplitude, e_0
 
 @st.cache_data
 def get_inverse_compton_sed(distance_kpc, p, e_cutoff_GeV, photon_field):
@@ -296,11 +302,13 @@ def get_inverse_compton_sed(distance_kpc, p, e_cutoff_GeV, photon_field):
     energy_range = np.logspace(8, 13, 100) * u.eV
     distance = distance_kpc * u.kpc
     e_cutoff = e_cutoff_GeV * u.GeV
+    amplitude = 1e36 / u.eV
+    e_0 = 100 * u.GeV
     photon_seed = photon_field  # No conversion needed
     # Define particle distribution with the given cutoff energy
     part_dist = naima.models.ExponentialCutoffPowerLaw(
-        amplitude=1e36 / u.eV,
-        e_0=100 * u.GeV,
+        amplitude=amplitude,
+        e_0=e_0,
         alpha=p,
         e_cutoff=e_cutoff
     )
@@ -328,7 +336,7 @@ def get_inverse_compton_sed(distance_kpc, p, e_cutoff_GeV, photon_field):
     rad_models = naima.models.InverseCompton(part_dist, seed_photon_fields=[photon_seed])
     sed = rad_models.sed(energy_range, distance=distance)
     we = rad_models.compute_We(1*u.GeV).to(u.erg).value
-    return energy_range.value, sed.to(u.Unit("erg cm-2 s-1")).value, we, additional_label
+    return energy_range.value, sed.to(u.Unit("erg cm-2 s-1")).value, we, amplitude, e_0, additional_label
 
 @st.cache_data
 def get_synchrotron_self_compton_sed(distance_kpc, p, e_cutoff_GeV, B_uGauss):
@@ -363,12 +371,14 @@ def get_synchrotron_self_compton_sed(distance_kpc, p, e_cutoff_GeV, B_uGauss):
     # Convert input values to appropriate astropy units
     distance = distance_kpc * u.kpc
     e_cutoff = e_cutoff_GeV * u.GeV
+    amplitude = 1e36 / u.eV
+    e_0 = 100 * u.GeV
     B = B_uGauss * u.uG
     
     # Define a particle distribution model using an exponential cutoff power law
     part_dist = naima.models.ExponentialCutoffPowerLaw(
-        amplitude=1e36 / u.eV,
-        e_0=100 * u.GeV,
+        amplitude=amplitude,
+        e_0=e_0,
         alpha=p,
         e_cutoff=e_cutoff
     )
@@ -395,7 +405,7 @@ def get_synchrotron_self_compton_sed(distance_kpc, p, e_cutoff_GeV, B_uGauss):
     sed_SYN = SYN.sed(spectrum_energy, distance=distance)
     we = IC.compute_We(1*u.GeV).to(u.erg).value
 
-    return spectrum_energy.value, sed_SYN.to(u.Unit("erg cm-2 s-1")).value, sed_IC.to(u.Unit("erg cm-2 s-1")).value, we
+    return spectrum_energy.value, sed_SYN.to(u.Unit("erg cm-2 s-1")).value, sed_IC.to(u.Unit("erg cm-2 s-1")).value, we, amplitude, e_0
 
 
 # --- Functions for the Crab Nebula fit by hand ---
@@ -663,7 +673,7 @@ if tab_selection == "Radiative Processes":
 
         bool_show_particle_dist = st.toggle("Show particle energy distribution", value=False, key=None)
 
-        e_v, s_v, we = get_pion_decay_sed(distance_kpc, p_index, e_cutoff_GeV, n_target_cm3)
+        e_v, s_v, we, amplitude, e_0 = get_pion_decay_sed(distance_kpc, p_index, e_cutoff_GeV, n_target_cm3)
         
         fig1, ax1 = plt.subplots(figsize=(9, 5))
         ax1.loglog(e_v, s_v, color=color_pion, lw=2, 
@@ -685,8 +695,8 @@ if tab_selection == "Radiative Processes":
             ax1_2 = ax1.twinx()
             particle_spectrum=naima.models.ExponentialCutoffPowerLaw.eval(
                 e_v * u.eV, 
-                amplitude=1e36 / u.eV, 
-                e_0=1* u.GeV, 
+                amplitude=amplitude, 
+                e_0=e_0, 
                 alpha=p_index, 
                 e_cutoff=e_cutoff_GeV * u.GeV, 
                 beta=1
@@ -697,6 +707,23 @@ if tab_selection == "Radiative Processes":
                 color=color_particles,
                 label='Particle spectrum',
                 ls="--"
+            )
+            ax1_2.scatter(
+                e_0.to("eV"),
+                amplitude.to("eV-1"),
+                color='k',
+                label='Amplitude at\nreference energy',
+                marker="x",
+                zorder=100
+            )
+            dnde_at_cutoff = np.interp(e_cutoff_GeV * 1e9, e_v, particle_spectrum.value)
+            ax1_2.scatter(
+                e_cutoff_GeV * 1e9,
+                dnde_at_cutoff,
+                color='k',
+                label='Cutoff energy',
+                marker="s",
+                zorder=100
             )
             ax1_2.set_ylabel('d$N$/d$E$ (protons eV$^{-1}$)', color=color_particles)
             ax1_2.tick_params(axis='y', labelcolor=color_particles)
@@ -812,7 +839,7 @@ if tab_selection == "Radiative Processes":
 
         bool_show_particle_dist = st.toggle("Show particle energy distribution", value=False, key=None)
 
-        e_v2, s_v2, we = get_bremsstrahlung_sed(distance_kpc, p_index, e_cutoff_GeV, n_medium_cm3)
+        e_v2, s_v2, we, amplitude, e_0 = get_bremsstrahlung_sed(distance_kpc, p_index, e_cutoff_GeV, n_medium_cm3)
         
         fig2, ax2 = plt.subplots(figsize=(9, 5))
         ax2.loglog(e_v2, s_v2, color=color_brem, lw=2, label=f"$d = {distance_kpc:.2f}$ kpc,\n"+\
@@ -833,8 +860,8 @@ if tab_selection == "Radiative Processes":
             ax2_2 = ax2.twinx()
             particle_spectrum=naima.models.ExponentialCutoffPowerLaw.eval(
                 e_v2 * u.eV, 
-                amplitude=1e31 / u.eV, 
-                e_0=100* u.GeV, 
+                amplitude=amplitude, 
+                e_0=e_0, 
                 alpha=p_index, 
                 e_cutoff=e_cutoff_GeV * u.GeV, 
                 beta=1
@@ -845,6 +872,23 @@ if tab_selection == "Radiative Processes":
                 color=color_particles,
                 label='Particle spectrum',
                 ls="--"
+            )
+            ax2_2.scatter(
+                e_0.to("eV"), 
+                amplitude.to("eV-1"),
+                color='k',
+                label='Amplitude at\nreference energy',
+                marker="x",
+                zorder=100
+            )
+            dnde_at_cutoff = np.interp(e_cutoff_GeV * 1e9, e_v2, particle_spectrum.value)
+            ax2_2.scatter(
+                e_cutoff_GeV * 1e9, 
+                dnde_at_cutoff,
+                color='k',
+                label='Cutoff energy',
+                marker="s",
+                zorder=100
             )
             ax2_2.set_ylabel('d$N$/d$E$ (electrons eV$^{-1}$)', color=color_particles)
             ax2_2.tick_params(axis='y', labelcolor=color_particles)
@@ -945,7 +989,7 @@ if tab_selection == "Radiative Processes":
 
         bool_show_particle_dist = st.toggle("Show particle energy distribution", value=False, key=None)
 
-        e_v3, s_v3, we = get_synchrotron_sed(distance_kpc, p_index, e_cutoff_GeV, B_uGauss)
+        e_v3, s_v3, we, amplitude, e_0 = get_synchrotron_sed(distance_kpc, p_index, e_cutoff_GeV, B_uGauss)
         
         fig3, ax3 = plt.subplots(figsize=(9, 5))
         ax3.loglog(e_v3, s_v3, color=color_sync, lw=2, label=f"$d = {distance_kpc:.2f}$ kpc,\n"+\
@@ -972,8 +1016,8 @@ if tab_selection == "Radiative Processes":
             ax3_3 = ax3.twinx()
             particle_spectrum=naima.models.ExponentialCutoffPowerLaw.eval(
                 e_v3 * u.eV, 
-                amplitude=1e36 / u.eV, 
-                e_0=100* u.GeV, 
+                amplitude=amplitude, 
+                e_0=e_0, 
                 alpha=p_index, 
                 e_cutoff=e_cutoff_GeV * u.GeV, 
                 beta=1
@@ -984,6 +1028,23 @@ if tab_selection == "Radiative Processes":
                 color=color_particles,
                 label='Particle spectrum',
                 ls="--"
+            )
+            ax3_3.scatter(
+                e_0.to("eV"), 
+                amplitude.to("eV-1"),
+                color='k',
+                label='Amplitude at\nreference energy',
+                marker="x",
+                zorder=100
+            )
+            dnde_at_cutoff = np.interp(e_cutoff_GeV * 1e9, e_v3, particle_spectrum.value)
+            ax3_3.scatter(
+                e_cutoff_GeV * 1e9, 
+                dnde_at_cutoff,
+                color='k',
+                label='Cutoff energy',
+                marker="s",
+                zorder=100
             )
             ax3_3.set_ylabel('d$N$/d$E$ (electrons eV$^{-1}$)', color=color_particles)
             ax3_3.tick_params(axis='y', labelcolor=color_particles)
@@ -1086,7 +1147,7 @@ if tab_selection == "Radiative Processes":
 
         bool_show_particle_dist = st.toggle("Show particle energy distribution", value=False, key=None)
 
-        e_v4, s_v4, we, additional_label = get_inverse_compton_sed(distance_kpc, p_index, e_cutoff_GeV, photon_field)
+        e_v4, s_v4, we, amplitude, e_0, additional_label = get_inverse_compton_sed(distance_kpc, p_index, e_cutoff_GeV, photon_field)
         
         fig4, ax4 = plt.subplots(figsize=(9, 5))
         ax4.loglog(e_v4, s_v4, color=color_ic, lw=2, 
@@ -1107,8 +1168,8 @@ if tab_selection == "Radiative Processes":
             ax4_2 = ax4.twinx()
             particle_spectrum=naima.models.ExponentialCutoffPowerLaw.eval(
                 e_v4 * u.eV, 
-                amplitude=1e36 / u.eV, 
-                e_0=100* u.GeV, 
+                amplitude=amplitude,
+                e_0=e_0,
                 alpha=p_index, 
                 e_cutoff=e_cutoff_GeV * u.GeV, 
                 beta=1
@@ -1119,6 +1180,23 @@ if tab_selection == "Radiative Processes":
                 color=color_particles,
                 label='Particle spectrum',
                 ls="--"
+            )
+            ax4_2.scatter(
+                e_0.to("eV"), 
+                amplitude.to("eV-1"),
+                color='k',
+                label='Amplitude at\nreference energy',
+                marker="x",
+                zorder=100
+            )
+            dnde_at_cutoff = np.interp(e_cutoff_GeV * 1e9, e_v4, particle_spectrum.value)
+            ax4_2.scatter(
+                e_cutoff_GeV * 1e9, 
+                dnde_at_cutoff,
+                color='k',
+                label='Cutoff energy',
+                marker="s",
+                zorder=100
             )
             ax4_2.set_ylabel('d$N$/d$E$ (electrons eV$^{-1}$)', color=color_particles)
             ax4_2.tick_params(axis='y', labelcolor=color_particles)
@@ -1229,7 +1307,7 @@ if tab_selection == "Radiative Processes":
 
         bool_show_particle_dist = st.toggle("Show particle energy distribution", value=False, key=None)
 
-        e_v5, s_v5_sync, s_v5_ic, we_v5 = get_synchrotron_self_compton_sed(distance_kpc, p_index, e_cutoff_GeV, B_uGauss)
+        e_v5, s_v5_sync, s_v5_ic, we_v5, amplitude, e_0 = get_synchrotron_self_compton_sed(distance_kpc, p_index, e_cutoff_GeV, B_uGauss)
         
         fig5, ax5 = plt.subplots(figsize=(9, 5))
         ax5.loglog(e_v5, s_v5_sync, color=color_sync, lw=2, label="Synchrotron")
@@ -1253,8 +1331,8 @@ if tab_selection == "Radiative Processes":
             ax5_3 = ax5.twinx()
             particle_spectrum=naima.models.ExponentialCutoffPowerLaw.eval(
                 e_v5 * u.eV, 
-                amplitude=1e36 / u.eV, 
-                e_0=100* u.GeV, 
+                amplitude=amplitude,
+                e_0=e_0,
                 alpha=p_index, 
                 e_cutoff=e_cutoff_GeV * u.GeV, 
                 beta=1
@@ -1265,6 +1343,23 @@ if tab_selection == "Radiative Processes":
                 color=color_particles,
                 label='Particle spectrum',
                 ls="--"
+            )
+            ax5_3.scatter(
+                e_0.to("eV"), 
+                amplitude.to("eV-1"),
+                color='k',
+                label='Amplitude at\nreference energy',
+                marker="x",
+                zorder=100
+            )
+            dnde_at_cutoff = np.interp(e_cutoff_GeV * 1e9, e_v5, particle_spectrum.value)
+            ax5_3.scatter(
+                e_cutoff_GeV * 1e9, 
+                dnde_at_cutoff,
+                color='k',
+                label='Cutoff energy',
+                marker="s",
+                zorder=100
             )
             ax5_3.set_ylabel('d$N$/d$E$ (electrons eV$^{-1}$)', color=color_particles)
             ax5_3.tick_params(axis='y', labelcolor=color_particles)
@@ -1409,6 +1504,32 @@ else:
             color=color_particles,
             label='Particle spectrum',
             ls="--"
+        )
+        ax1_4.scatter(
+            1e12 * u.eV, 
+            3.699e36 / u.eV,
+            color='k',
+            label='Amplitude at\nreference energy',
+            marker="x",
+            zorder=100
+        )
+        dnde_at_break = np.interp(0.265e12, spectrum_energy, particle_spectrum.value)
+        ax1_4.scatter(
+            0.265e12 * u.eV,
+            dnde_at_break,
+            color='k',
+            label='Energy break',
+            marker="D",
+            zorder=100
+        )
+        dnde_at_cutoff = np.interp(e_cutoff_TeV * 1e12, spectrum_energy, particle_spectrum.value)
+        ax1_4.scatter(
+            e_cutoff_TeV * 1e12,
+            dnde_at_cutoff,
+            color='k',
+            label='Cutoff energy',
+            marker="s",
+            zorder=100
         )
         ax1_4.set_ylabel('d$N$/d$E$ (electrons eV$^{-1}$)', color=color_particles)
         ax1_4.tick_params(axis='y', labelcolor=color_particles)
